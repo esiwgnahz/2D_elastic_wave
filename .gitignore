@@ -2,3 +2,5 @@
 output
 main
 *.txt
+*.tar.gz
+*.tgz
