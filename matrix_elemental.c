@@ -1,7 +1,13 @@
 #include <stdio.h>
+#include "shape_functions.h"
 
+#include "elements.h"
+
+/* Gauss-Legendre-Lobatto
+   N points are enought to integrate polynomial of 2N-3 degree */
 const double xi[]={-1., 0., 1.};
 const double wi[]={1./3., 4./3., 1./3.};
+
 
 void element_reg( int elem, double lambda, double mu, double rho, double *node2xy, int *elem2node, double *k_elem, double *m_elem_diag, double *m_elem ) {
 

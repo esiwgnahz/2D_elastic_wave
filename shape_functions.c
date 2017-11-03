@@ -1,3 +1,5 @@
+#include "shape_functions.h"
+
 void shape1d3( double x, double *N, double *dN ) {
 	N[0] = .5*x*(x-1);
 	N[1] = -(x+1)*(x-1);

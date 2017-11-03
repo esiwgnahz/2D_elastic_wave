@@ -3,9 +3,9 @@
 #include "petscmat.h"
 #include "petscviewer.h"
 
-void create_model( int FWTR, int *nNode, double *dim_x, double *dim_y, double **node2xy, int *nElem, int **elem2node, int **elem2loc, int *nDOF, int **node2DOF, int **DOFx, int **DOFy, int *nDOFsrf, int **DOFx_srf, int **DOFy_srf );
-void assemble_matrix( int FWTR, Vec M_diag, Mat K, Mat Ks, int nElem, int *elem2loc, int nDOFsrf, int *node2DOF, int *elem2node, double *node2xy );
-void assemble_body_force( double dim_x, double dim_y, int nNode, double *node2xy, int *node2DOF, Vec f, int *node_load );
+#include "model.h"
+#include "assembly.h"
+
 void solver_RK4( int FWTR, Vec M_diag, Mat K, Mat Ks, Vec f, int nDOF, int *DOFx, int *DOFy, double *node2xy, int *node2DOF, int node_load, int nDOFsrf, int *DOFx_srf, int *DOFy_srf );
 
 int main( int argc, char *args[] ) {

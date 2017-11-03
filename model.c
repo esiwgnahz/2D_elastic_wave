@@ -1,8 +1,13 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
-void create_model( int FWTR, int *nNode, double *dim_x, double *dim_y, double **node2xy, int *nElem, int **elem2node, int **elem2loc, int *nDOF, int **node2DOF, int **DOFx, int **DOFy, int *nDOFsrf, int **DOFx_srf, int **DOFy_srf ) {
+#include "model.h"
+
+void create_model( int FWTR, int *nNode, double *dim_x, double *dim_y, double **node2xy, int *nElem, int **elem2node, int **elem2loc, int *nDOF, int **node2DOF, int **DOFx, int **DOFy, int *nDOFsrf, int **DOFx_srf, int **DOFy_srf )
+{
 
 	int i0, i1, i2;
 	int nNodeX, nNodeY;
@@ -12,6 +17,9 @@ void create_model( int FWTR, int *nNode, double *dim_x, double *dim_y, double **
 	int elem, node;
 
 	FILE *fid;
+
+	const char* folderr; /* To check if the output folder exists. */
+    struct stat sb;      /* and this one too */
 
 	printf("----- creating model -----\n");
 
@@ -140,6 +148,18 @@ void create_model( int FWTR, int *nNode, double *dim_x, double *dim_y, double **
 	(*DOFx) = (int *)malloc((*nDOF)/2*sizeof(int));
 	(*DOFy) = (int *)malloc((*nDOF)/2*sizeof(int));
 	i1 = 0;
+
+	/* Check if the output directory exists. */
+    
+    //folderr = "C:\\Users\\SaMaN\\Desktop\\Ppln";
+    folderr = "./output/";
+
+    if( stat(folderr,&sb)!=0 || !S_ISDIR(sb.st_mode) )
+    {
+        printf("Output foler does not exist. Creating.\n");
+        mkdir(folderr,0777);
+    }
+
 	fid = fopen("output/node2xy.txt","wt");
 	for( i0=0; i0<(*nNode); i0++ ) {
 		if( (*node2DOF)[2*i0]>-1 ) {
