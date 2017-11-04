@@ -6,13 +6,12 @@
 
 #include "model.h"
 
-void create_model( int FWTR, int *nNode, double *dim_x, double *dim_y, double **node2xy, int *nElem, int **elem2node, int **elem2loc, int *nDOF, int **node2DOF, int **DOFx, int **DOFy, int *nDOFsrf, int **DOFx_srf, int **DOFy_srf )
+void create_model( int FWTR, int *nNode, double *dim_x, double *dim_y, double **node2xy, int *nElem, int **elem2node, int **elem2loc, int *nDOF, int **node2DOF, int **DOFx, int **DOFy, int *nDOFsrf, int **DOFx_srf, int **DOFy_srf, double *h )
 {
 
 	int i0, i1, i2;
 	int nNodeX, nNodeY;
 	int nElemX, nElemY;
-	double h;
 
 	int elem, node;
 
@@ -24,11 +23,11 @@ void create_model( int FWTR, int *nNode, double *dim_x, double *dim_y, double **
 	printf("----- creating model -----\n");
 
 	/* coordinates, 4 vertices of a quadrilateral */
-	*dim_x = 50.;
-	*dim_y = 50.;
-	h = .5;
-	nNodeX = (int)((*dim_x)/h + 1e-3) + 1;
-	nNodeY = (int)((*dim_y)/h + 1e-3) + 1;
+	*dim_x = 40.;
+	*dim_y = 40.;
+	*h = .2;
+	nNodeX = (int)((*dim_x)/(*h) + 1e-3) + 1;
+	nNodeY = (int)((*dim_y)/(*h) + 1e-3) + 1;
 	*nNode = nNodeX*nNodeY;
 
 	(*node2xy) = (double *)malloc((*nNode)*2*sizeof(double));
@@ -36,8 +35,8 @@ void create_model( int FWTR, int *nNode, double *dim_x, double *dim_y, double **
 	for (i0 = 0; i0 < nNodeX; i0++) {
 		for (i1 = 0; i1 < nNodeY; i1++) {
 			node = i0*nNodeY + i1;
-			(*node2xy)[2*node  ] = i0*h;
-			(*node2xy)[2*node+1] = i1*h;
+			(*node2xy)[2*node  ] = i0*(*h);
+			(*node2xy)[2*node+1] = i1*(*h);
 		}
 	}
 // // DEBUG: check nodal coordinates
@@ -244,7 +243,11 @@ void create_model( int FWTR, int *nNode, double *dim_x, double *dim_y, double **
 	fprintf(fid,"size of medel,");
 	fprintf(fid,"%f,%f\n",*dim_x,*dim_y);
 	fprintf(fid,"mesh size,");
-	fprintf(fid,"%f\n",h);
+	fprintf(fid,"%f\n",*h);
+	fprintf(fid,"nodes on one side (X Y),");
+	fprintf(fid,"%i,%i\n",nNodeX,nNodeY);
+	fprintf(fid,"elements on one side (X Y),");
+	fprintf(fid,"%i,%i\n",nElemX,nElemY);
 	fclose(fid);
 
 	fid = fopen("output/elem2node.txt","wt");

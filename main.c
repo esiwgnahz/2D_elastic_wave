@@ -5,8 +5,7 @@
 
 #include "model.h"
 #include "assembly.h"
-
-void solver_RK4( int FWTR, Vec M_diag, Mat K, Mat Ks, Vec f, int nDOF, int *DOFx, int *DOFy, double *node2xy, int *node2DOF, int node_load, int nDOFsrf, int *DOFx_srf, int *DOFy_srf );
+#include "solvers.h"
 
 int main( int argc, char *args[] ) {
 
@@ -21,6 +20,8 @@ int main( int argc, char *args[] ) {
 	int *DOFx, *DOFy;
 	int nDOFsrf, *DOFx_srf, *DOFy_srf;
 	int node_load;
+
+	double h, cp;
 
 	Vec M_diag;
 	Mat Ks, K;
@@ -49,7 +50,7 @@ PetscViewer viewer;
 	}
 
 	/* Create model. */
-	create_model( FWTR, &nNode, &dim_x, &dim_y, &node2xy, &nElem, &elem2node, &elem2loc, &nDOF, &node2DOF, &DOFx, &DOFy, &nDOFsrf, &DOFx_srf, &DOFy_srf );
+	create_model( FWTR, &nNode, &dim_x, &dim_y, &node2xy, &nElem, &elem2node, &elem2loc, &nDOF, &node2DOF, &DOFx, &DOFy, &nDOFsrf, &DOFx_srf, &DOFy_srf, &h );
 
 	/* Create PETSc objects. */
 	VecCreateMPI( PETSC_COMM_WORLD, PETSC_DECIDE, nDOF, &M_diag );
@@ -65,7 +66,7 @@ PetscViewer viewer;
 	MatSetOption( Ks, MAT_IGNORE_ZERO_ENTRIES, PETSC_TRUE );
 
 	/* Create matrices and force vector. */
-	assemble_matrix( FWTR, M_diag, K, Ks, nElem, elem2loc, nDOFsrf, node2DOF, elem2node, node2xy );
+	assemble_matrix( FWTR, M_diag, K, Ks, nElem, elem2loc, nDOFsrf, node2DOF, elem2node, node2xy, &cp );
 	assemble_body_force( dim_x, dim_y, nNode, node2xy, node2DOF, f, &node_load );
 
 // VecNorm( M_diag, NORM_2, &vecnorm );
@@ -91,7 +92,7 @@ PetscViewer viewer;
 // // PetscViewerDestroy( &viewer );
 
 	/* Solve. */
-	solver_RK4( FWTR, M_diag, K, Ks, f, nDOF, DOFx, DOFy, node2xy, node2DOF, node_load, nDOFsrf, DOFx_srf, DOFy_srf );
+	solver_RK4( FWTR, M_diag, K, Ks, f, nDOF, DOFx, DOFy, node2xy, node2DOF, node_load, nDOFsrf, DOFx_srf, DOFy_srf, h, cp );
 
 	/* Wrap up. */
 	VecDestroy( &M_diag );

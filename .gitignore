@@ -4,3 +4,6 @@ main
 *.txt
 *.tar.gz
 *.tgz
+*.dat
+*.png
+*.avi

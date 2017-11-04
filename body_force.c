@@ -9,8 +9,8 @@ void assemble_body_force( double dim_x, double dim_y, int nNode, double *node2xy
 
 	printf("----- force vector assembly -----\n");
 
-	x0 = .5*dim_x;
-	y0 = .5*dim_y;
+	x0 = .3*dim_x;
+	y0 = .3*dim_y;
 	dist_min = sqrt( dim_x*dim_x + dim_y*dim_y );
 
 	for( i0=0; i0<nNode; i0++ ) {
