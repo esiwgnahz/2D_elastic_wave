@@ -1,5 +1,4 @@
 *.o
-output
 main
 *.txt
 *.tar.gz
