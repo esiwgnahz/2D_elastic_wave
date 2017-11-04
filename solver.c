@@ -236,7 +236,7 @@ void solver_RK4( int FWTR, Vec M_diag, Mat K, Mat Ks, Vec f, int nDOFreg, int *D
 		}
 
 		/* Print entire response. */
-		if( i0%1==0 ) {
+		if( i0%5==0 ) {
 			VecGetSubVector( x1n, isx_reg, &ux_reg );
 			VecGetSubVector( x1n, isy_reg, &uy_reg );
 

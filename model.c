@@ -231,4 +231,53 @@ void create_model( int FWTR, int *nNode, double *dim_x, double *dim_y, double **
 // }
 // fclose(fid);
 // exit(1);
+
+	fid = fopen("output/model_info.txt","wt");
+	fprintf(fid,"number of nodes,");
+	fprintf(fid,"%i\n",*nNode);
+	fprintf(fid,"number of elements,");
+	fprintf(fid,"%i\n",*nElem);
+	fprintf(fid,"number of degrees of freedom,");
+	fprintf(fid,"%i\n",*nDOF); 
+	fprintf(fid,"number of surface degrees of freedom,");
+	fprintf(fid,"%i\n",*nDOFsrf);
+	fprintf(fid,"size of medel,");
+	fprintf(fid,"%f,%f\n",*dim_x,*dim_y);
+	fprintf(fid,"mesh size,");
+	fprintf(fid,"%f\n",h);
+	fclose(fid);
+
+	fid = fopen("output/elem2node.txt","wt");
+	for( i0=0; i0<*nElem; i0++ )
+	{
+		for( i1=0; i1<9; i1++ )
+			fprintf(fid,"%i ",(*elem2node)[9*i0+i1]);
+		fprintf(fid,"\n");
+	}
+	fclose(fid);
+
+	fid = fopen("output/elem2loc.txt","wt");
+	for( i0=0; i0<(*nElem); i0++ )
+		fprintf(fid,"%i\n",(*elem2loc)[i0]);
+	fclose(fid);
+
+	fid = fopen("output/node2DOF.txt","wt");
+	for( i0=0; i0<(*nNode); i0++ )
+		fprintf(fid,"%i %i\n",(*node2DOF)[i0],(*node2DOF)[i0+1]);
+	fclose(fid);
+
+	fid = fopen("output/DOF_srf.txt","wt");
+	for( i0=0; i0<(*nDOFsrf)/2; i0++ )
+		fprintf(fid,"%i %i\n",(*DOFx_srf)[i0],(*DOFy_srf)[i0]);
+	fclose(fid);
+
+	fid = fopen("output/DOFx2node.txt","wt");
+	for( i0=0; i0<(*nDOF)/2; i0++ )
+		fprintf(fid,"%i\n",(*DOFx)[i0]);
+	fclose(fid);
+
+	fid = fopen("output/DOFy2node.txt","wt");
+	for( i0=0; i0<(*nDOF)/2; i0++ )
+		fprintf(fid,"%i\n",(*DOFy)[i0]);
+	fclose(fid);
 }
