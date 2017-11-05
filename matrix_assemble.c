@@ -9,7 +9,7 @@
 
 void element_reg( int elem, double lambda, double mu, double rho, double *node2xy, int *elem2node, double *k_elem, double *m_elem_diag, double *m_elem );
 
-void assemble_matrix( int FWTR, Vec M_diag, Mat K, Mat Ks, int nElem, int *elem2loc, int nDOFsrf, int *node2DOF, int *elem2node, double *node2xy, double *cp ) {
+void assemble_matrix( int FWTR, Vec M_diag, Mat K, Mat Ks, int nElem, int *elem2loc, int nDOFsrf, int *node2DOF, int *elem2node, double *node2xy, double *cp, double *cs ) {
 
 	clock_t start = clock(), diff;
 	int msec;
@@ -19,20 +19,20 @@ void assemble_matrix( int FWTR, Vec M_diag, Mat K, Mat Ks, int nElem, int *elem2
 	double m_elem_diag[18], m_elem[324], k_elem[324];
 	int address[18], address_srf[18];
 
-	double lambda, mu, rho, cs;
+	double lambda, mu, rho;
 
 	printf("----- matrix assembly -----\n");
 
 	lambda = 1e8;
 	mu = 1e8;
 	rho = 2200.;
-	cs = sqrt(lambda/rho);
+	*cs = sqrt(lambda/rho);
 	*cp = sqrt((lambda+2*mu)/rho);
 	printf(" lambda=%e\n",lambda);
 	printf("     mu=%e\n",mu);
 	printf("    rho=%e\n",rho);
 	printf("     cp=%9.4f\n",*cp);
-	printf("     cs=%9.4f\n",cs);
+	printf("     cs=%9.4f\n",*cs);
 
 	if( FWTR==0 ) {
 		for (i0=0; i0<nElem; i0++) {

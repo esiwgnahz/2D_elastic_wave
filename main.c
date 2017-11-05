@@ -21,7 +21,7 @@ int main( int argc, char *args[] ) {
 	int nDOFsrf, *DOFx_srf, *DOFy_srf;
 	int node_load;
 
-	double h, cp;
+	double h, cp, cs, dist_max;
 
 	Vec M_diag;
 	Mat Ks, K;
@@ -66,8 +66,8 @@ PetscViewer viewer;
 	MatSetOption( Ks, MAT_IGNORE_ZERO_ENTRIES, PETSC_TRUE );
 
 	/* Create matrices and force vector. */
-	assemble_matrix( FWTR, M_diag, K, Ks, nElem, elem2loc, nDOFsrf, node2DOF, elem2node, node2xy, &cp );
-	assemble_body_force( dim_x, dim_y, nNode, node2xy, node2DOF, f, &node_load );
+	assemble_matrix( FWTR, M_diag, K, Ks, nElem, elem2loc, nDOFsrf, node2DOF, elem2node, node2xy, &cp, &cs );
+	assemble_body_force( dim_x, dim_y, nNode, node2xy, node2DOF, f, &node_load, &dist_max );
 
 // VecNorm( M_diag, NORM_2, &vecnorm );
 // printf("norm(M_diag)=%f\n",vecnorm);
@@ -92,7 +92,7 @@ PetscViewer viewer;
 // // PetscViewerDestroy( &viewer );
 
 	/* Solve. */
-	solver_RK4( FWTR, M_diag, K, Ks, f, nDOF, DOFx, DOFy, node2xy, node2DOF, node_load, nDOFsrf, DOFx_srf, DOFy_srf, h, cp );
+	solver_RK4( FWTR, M_diag, K, Ks, f, nDOF, DOFx, DOFy, node2xy, node2DOF, node_load, nDOFsrf, DOFx_srf, DOFy_srf, h, cp, cs, dist_max );
 
 	/* Wrap up. */
 	VecDestroy( &M_diag );

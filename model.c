@@ -6,7 +6,8 @@
 
 #include "model.h"
 
-void create_model( int FWTR, int *nNode, double *dim_x, double *dim_y, double **node2xy, int *nElem, int **elem2node, int **elem2loc, int *nDOF, int **node2DOF, int **DOFx, int **DOFy, int *nDOFsrf, int **DOFx_srf, int **DOFy_srf, double *h )
+void create_model( int FWTR, int *nNode, double *dim_x, double *dim_y, double **node2xy, int *nElem, int **elem2node, int **elem2loc, 
+	int *nDOF, int **node2DOF, int **DOFx, int **DOFy, int *nDOFsrf, int **DOFx_srf, int **DOFy_srf, double *h )
 {
 
 	int i0, i1, i2;
@@ -25,7 +26,7 @@ void create_model( int FWTR, int *nNode, double *dim_x, double *dim_y, double **
 	/* coordinates, 4 vertices of a quadrilateral */
 	*dim_x = 40.;
 	*dim_y = 40.;
-	*h = .2;
+	*h = .1;
 	nNodeX = (int)((*dim_x)/(*h) + 1e-3) + 1;
 	nNodeY = (int)((*dim_y)/(*h) + 1e-3) + 1;
 	*nNode = nNodeX*nNodeY;

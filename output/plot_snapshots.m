@@ -62,6 +62,12 @@ ux_reg = fread(fid,[nDOF/2,nTstep],'double');
 fclose(fid);
 ux_max = max(max(abs(ux_reg)));
 
+
+%% PLOT SNAPSHOTS
+status = exist('snapshots','dir');
+if status==0
+    mkdir('snapshots');
+end
 figure('Position',[263,164,560,420])
 colormap jet
 Z = zeros(size(X));
