@@ -2,16 +2,20 @@
 #include <math.h>
 #include "petscvec.h"
 
-void assemble_body_force( double dim_x, double dim_y, int nNode, double *node2xy, int *node2DOF, Vec f, int *node_load ) {
+
+
+void assemble_body_force( double dim_x, double dim_y, int nNode, double *node2xy, int *node2DOF, Vec f, int *node_load, double *dist_max ) {
 
 	int i0;
 	double x, y, x0, y0, r, dist_min;
 
 	printf("----- force vector assembly -----\n");
 
-	x0 = .5*dim_x;
-	y0 = .5*dim_y;
+	x0 = .3*dim_x;
+	y0 = .3*dim_y;
 	dist_min = sqrt( dim_x*dim_x + dim_y*dim_y );
+	*dist_max = ( sqrt(x0*x0+(dim_y-y0)*(dim_y-y0)) > sqrt((dim_x-x0)*(dim_x-x0)+(dim_y-y0)*(dim_y-y0)) )
+		? sqrt(x0*x0+(dim_y-y0)*(dim_y-y0)) : sqrt((dim_x-x0)*(dim_x-x0)+(dim_y-y0)*(dim_y-y0));
 
 	for( i0=0; i0<nNode; i0++ ) {
 		x = node2xy[2*i0  ] - x0;
@@ -41,3 +45,4 @@ double loading_fw_time_signal( double t, double offset ) {
 		return 0.;
 	}
 }
+

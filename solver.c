@@ -5,6 +5,8 @@
 #include "petscviewerhdf5.h"
 #include "petscis.h"
 
+#include "solvers.h"
+
 double loading_fw_time_signal( double t, double offset );
 
 double dabsmax( int nsize, const double *arr ) {
@@ -21,7 +23,11 @@ double dabsmax( int nsize, const double *arr ) {
 	return maximum;
 }
 
-void solver_RK4( int FWTR, Vec M_diag, Mat K, Mat Ks, Vec f, int nDOFreg, int *DOFx_reg, int *DOFy_reg, double *node2xy, int *node2DOF, int node_load, int nDOFsrf, int *DOFx_srf, int *DOFy_srf ) {
+void solver_RK4( int FWTR, Vec M_diag, Mat K, Mat Ks, Vec f, 
+	int nDOFreg, int *DOFx_reg, int *DOFy_reg, 
+	double *node2xy, int *node2DOF, int node_load, 
+	int nDOFsrf, int *DOFx_srf, int *DOFy_srf, 
+	double h, double cp, double cs, double dist_max ) {
 
 	clock_t start = clock(), diff;
 	int msec;
@@ -61,12 +67,19 @@ void solver_RK4( int FWTR, Vec M_diag, Mat K, Mat Ks, Vec f, int nDOFreg, int *D
 	FILE *fid_ux_reg, *fid_uy_reg;
 	FILE *fid_ux_trg, *fid_uy_trg;
 	FILE *fid_ux_fin, *fid_uy_fin;
+	FILE *fid;
 
 	printf("----- solver RK4 -----\n");
 
-	nTstep = 425;
-	dt = .001;
+	dt = .8*h/cp;
+	nTstep = dist_max/cs/dt*1.05;
 	offset = .01;
+	printf(" nTstep=%i\n",nTstep);
+	printf("     dt=%f\n",dt);
+	fid = fopen("output/simulation_info.txt","wt");
+	fprintf(fid,"nTstep,%i\n",nTstep);
+	fprintf(fid,"dt,%f\n",dt);
+	fclose(fid);
 
 	DOF_load[0] = node2DOF[node_load*2  ];
 	DOF_load[1] = node2DOF[node_load*2+1];
@@ -236,7 +249,7 @@ void solver_RK4( int FWTR, Vec M_diag, Mat K, Mat Ks, Vec f, int nDOFreg, int *D
 		}
 
 		/* Print entire response. */
-		if( i0%5==0 ) {
+		if( i0%1==0 ) {
 			VecGetSubVector( x1n, isx_reg, &ux_reg );
 			VecGetSubVector( x1n, isy_reg, &uy_reg );
 
@@ -268,7 +281,8 @@ void solver_RK4( int FWTR, Vec M_diag, Mat K, Mat Ks, Vec f, int nDOFreg, int *D
 		VecGetValues( x1n, 2, DOF_load, disp_load );
 		fwrite( &disp_load[0], sizeof(double), 1, fid_ux_trg );
 		fwrite( &disp_load[1], sizeof(double), 1, fid_uy_trg );
-		printf("t=%5.3f, x=%5.2f, y=%5.2f, ux_trg=%11.4e, uy_trg=%11.4e\n",(i0+1)*dt,node2xy[node_load*2],node2xy[node_load*2+1],disp_load[0],disp_load[1]);
+		if( i0%2==0 )
+			printf("t=%g, ux_trg=%11.4e, uy_trg=%11.4e\n",(i0+1)*dt,disp_load[0],disp_load[1]);
 	}
 
 	ISDestroy( &isx_reg );
